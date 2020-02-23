@@ -18,12 +18,6 @@ setup(
 # pip3 install timecode
 # pip3 install python-ltc
 
-import pdb
-import timecode
-import datetime
-import time
-# from tools import cint, ltc_encode
-from timecode import Timecode
 from TimeSunk.DateTime import TimeSunkDateTime
 from TimeSunk.Settings import TimeSunkSettings
 
@@ -37,7 +31,6 @@ GoProWifiNetworks = [
 ]
 
 """
-# Rowan's wifi
 GoProWifiNetworks = [
     ["helm narrow", "sport0544"],
     ["chesty cam", "sail2567"],
@@ -45,11 +38,6 @@ GoProWifiNetworks = [
     ["GP24595375", "fpn-Fcr-4qr"]
 ]
 """
-
-# terminal control
-
-# tc2 = Timecode('24')
-# TimeSunk.setTimeCode(start=tc2.tc_to_string)
 
 print("CPU: Syncing computer time")
 os.system("sudo sntp -sS time.apple.com")
