@@ -20,6 +20,7 @@ setup(
 
 from TimeSunk.DateTime import TimeSunkDateTime
 from TimeSunk.Settings import TimeSunkSettings
+from TimeSunk.Status import TimeSunkStatus
 
 import time, os
 
@@ -62,6 +63,7 @@ for GoProCameraWifi in GoProWifiNetworks:
 
         GoProDateTime = TimeSunkDateTime(GoProCameraInstance)
         GoProSettings = TimeSunkSettings(GoProCameraInstance)
+        GoProStatus = TimeSunkStatus(GoProCameraInstance)
 
         datetime_before = GoProDateTime.get()
 
@@ -83,6 +85,8 @@ for GoProCameraWifi in GoProWifiNetworks:
         print('%s: Settings synced' % (GoProWifiSSID))
 
         print('%s: Updated.' % (GoProWifiSSID))
+
+        print(GoProStatus.overview())
 
     except Exception as e:
        print("%s: Couldn't connect to Camera" % (GoProCameraWifi[0]))

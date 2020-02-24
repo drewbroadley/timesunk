@@ -1,14 +1,5 @@
-import time
-import socket
-import urllib.request
-import json
-import re
-import pdb
-import timecode
 import datetime
-import os
-import time
-from goprocam import GoProCamera, constants as GoProCameraConstants
+
 
 class TimeSunkDateTime:
 
