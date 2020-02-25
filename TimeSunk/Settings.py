@@ -17,45 +17,31 @@ class TimeSunkSettings:
 
     GoProCameraInstance = None
 
-    def __init__(
-        self, GoProCamera,
-        mode="video", fps=50, resolution="1080p", fov="wide", low_light=True, protune_video=True, white_balance="auto",
-        color="flat", sharpness="auto", iso_max=400, ev=0.0, rotation="auto", default_mode="video", quik_capture=True,
+    """
+         quik_capture=True,
         led=False, gps=True, lcd_brightness=0.1, beeps=False, video_format="PAL", auto_off="Never", screen_saver="Never",
-        language="English",language_voice="English - US", aspect_ratio="16:9", audio_mode="auto",
-        spot_meter=True,video_stabilised=True,protune_audio=True
-    ):
+         aspect_ratio="16:9",
+        
+    """
 
+    def __init__(self, GoProCamera, settings):
         self.GoProCameraInstance = GoProCamera
-        self.mode = mode
-        self.fps = fps
-        self.resolution = resolution
-        self.fov = fov
-        self.low_light = low_light
-        self.protune_video = protune_video
-        self.protune_audio = protune_audio
-        self.white_balance = white_balance
-        self.color = color
-        self.aspect_ratio = aspect_ratio
-        self.audio_mode = audio_mode
-        self.spot_meter = spot_meter
-        self.video_stabilised = video_stabilised
-        #self.shutter = shutter
-        self.sharpness = sharpness
-        self.iso_max = iso_max
-        self.ev = ev
-        self.rotation = rotation
-        self.default_mode = default_mode
-        self.quik_capture = quik_capture
-        self.led = led
-        self.gps = gps
-        self.lcd_brightness = lcd_brightness
-        self.beeps = beeps
-        self.video_format = video_format
-        self.auto_off = auto_off
-        self.screen_saver = screen_saver
-        self.language = language
-        self.language_voice = language_voice
+        self.mode = settings["mode"] if "mode" in settings else "video"
+        self.fps = settings["fps"] if "fps" in settings else 24
+        self.resolution = settings["resolution"] if "resolution" in settings else "1080p"
+        self.fov = settings["fov"] if "fov" in settings else "wide"
+        self.low_light = settings["low_light"] if "low_light" in settings else True
+        self.protune_video = settings["protune_video"] if "protune_video" in settings else True
+        self.protune_audio = settings["protune_audio"] if "protune_audio" in settings else True
+        self.white_balance = settings["white_balance"] if "white_balance" in settings else "auto"
+        self.color = settings["color"] if "color" in settings else "flat"
+        self.aspect_ratio = settings["color"] if "color" in settings else "16:9"
+        self.audio_mode = settings["audio_mode"] if "audio_mode" in settings else "auto"
+        self.spot_meter = settings["spot_meter"] if "spot_meter" in settings else True
+        self.video_stabilised = settings["video_stabilised"] if "video_stabilised" in settings else True
+        self.sharpness = settings["sharpness"] if "sharpness" in settings else "auto"
+        self.iso_max = settings["iso_max"] if "iso_max" in settings else 800
+        self.ev = settings["ev"] if "ev" in settings else 0.0
 
     def set(self):
 

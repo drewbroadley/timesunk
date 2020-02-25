@@ -25,3 +25,12 @@ class TimeSunkDateTime:
         d = self.GoProCameraInstance.syncTime()
 
         return d
+
+    def timecode(self, fps):
+        microseconds_fps = 1000000 / fps
+        d = datetime.datetime.now()
+        t = d.time()
+        microseconds = int(t.strftime('%f'))
+        timecode_fps = str(int(microseconds/microseconds_fps))
+        value = t.strftime('%H:%M:%S:') + timecode_fps
+        return value

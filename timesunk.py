@@ -23,7 +23,8 @@ from TimeSunk.Settings import TimeSunkSettings
 from TimeSunk.Status import TimeSunkStatus
 
 import time, os
-
+import datetime
+from timecode import Timecode
 from goprocam import GoProCamera, constants as GoProCameraConstants
 from timecode import Timecode
 
@@ -40,9 +41,28 @@ GoProWifiNetworks = [
 ]
 """
 
+settings = {
+    "fps": 50,
+    "mode": "video",
+    "resolution": "1080p",
+    "low_light": True,
+    "protune_video": True,
+    "protune_audio": True,
+    "white_balance": "auto",
+    "color": "flat",
+    "aspect_ratio": "16:9",
+    "audio_mode": "auto",
+    "spot_meter": True,
+    "video_stabilised": True,
+    "sharpness": "auto",
+    "iso_max": 400,
+    "ev": 0.0
+}
+
 print("CPU: Syncing computer time")
 os.system("sudo sntp -sS time.apple.com")
 print("CPU: time synced!")
+
 
 for GoProCameraWifi in GoProWifiNetworks:
 
@@ -62,8 +82,10 @@ for GoProCameraWifi in GoProWifiNetworks:
         GoProWifiSSID = "GoPro:" + GoProCameraInstance.getStatus('status', '30')
 
         GoProDateTime = TimeSunkDateTime(GoProCameraInstance)
-        GoProSettings = TimeSunkSettings(GoProCameraInstance)
+        GoProSettings = TimeSunkSettings(GoProCameraInstance, settings)
         GoProStatus = TimeSunkStatus(GoProCameraInstance)
+
+        timecode = GoProDateTime.timecode(50)
 
         datetime_before = GoProDateTime.get()
 
@@ -86,7 +108,11 @@ for GoProCameraWifi in GoProWifiNetworks:
 
         print('%s: Updated.' % (GoProWifiSSID))
 
-        print(GoProStatus.overview())
+        print('Timecode:')
+
+        while (1):
+            print(GoProDateTime.timecode(settings["fps"]), end='\r\n')
+            time.sleep(1 / settings["fps"])
 
     except Exception as e:
        print("%s: Couldn't connect to Camera" % (GoProCameraWifi[0]))
