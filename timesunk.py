@@ -111,6 +111,9 @@ for GoProCameraWifi in GoProWifiNetworks:
     except Exception as e:
        print("%s: Couldn't connect to Camera" % (GoProCameraWifi[0]))
 
+# Setting null instance to do Timecode
+GoProDateTime = TimeSunkDateTime({})
+
 print('Timecode:')
 
 while (1):
