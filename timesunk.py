@@ -108,15 +108,14 @@ for GoProCameraWifi in GoProWifiNetworks:
 
         print('%s: Updated.' % (GoProWifiSSID))
 
-        print('Timecode:')
-
-        while (1):
-            print(GoProDateTime.timecode(settings["fps"]), end='\r\n')
-            time.sleep(1 / settings["fps"])
-
     except Exception as e:
        print("%s: Couldn't connect to Camera" % (GoProCameraWifi[0]))
 
+print('Timecode:')
+
+while (1):
+    print(GoProDateTime.timecode(settings["fps"]), end='\r\n')
+    time.sleep(1 / settings["fps"])
 
 # GoProCameraInstance = GoProCamera.GoPro(ip='10.5.5.9',constants.auth)
 
