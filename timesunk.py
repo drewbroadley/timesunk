@@ -18,11 +18,13 @@ setup(
 # pip3 install timecode
 # pip3 install python-ltc
 
+from TimeSunk.Connect import TimeSunkConnect
 from TimeSunk.DateTime import TimeSunkDateTime
 from TimeSunk.Settings import TimeSunkSettings
 from TimeSunk.Status import TimeSunkStatus
 
 import time, os
+import subprocess
 import datetime
 from timecode import Timecode
 from goprocam import GoProCamera, constants as GoProCameraConstants
@@ -60,56 +62,54 @@ settings = {
 }
 
 print("CPU: Syncing computer time")
-os.system("sudo sntp -sS time.apple.com")
+CPUNetworkTime = "/usr/bin/sudo /usr/local/bin/sntp -sS time.apple.com"
+CPUNetworkTimeOutput = subprocess.run(CPUNetworkTime, stdout=subprocess.PIPE, shell=True)
 print("CPU: time synced!")
 
 
 for GoProCameraWifi in GoProWifiNetworks:
 
     print("%s: Connecting... " % (GoProCameraWifi[0]))
-    GoProNetworkSetup = "networksetup -setairportnetwork en0 '%s' '%s'" % (GoProCameraWifi[0], GoProCameraWifi[1])
 
-    print("%s: Trying `%s`" % (GoProCameraWifi[0], GoProNetworkSetup))
-    os.system(GoProNetworkSetup)
+    GoProConnect = TimeSunkConnect(GoProCameraWifi)
+    GoProCameraInstance = GoProConnect.set()
 
-    print("%s: Settling for 10 seconds.." % (GoProCameraWifi[0]))
-    time.sleep(10)
+    if (GoProCameraInstance is None):
+        print('%s: Error connecting - tried 5 times, skipping... ' % (GoProCameraWifi[0]))
+    else:
+        try:
+            GoProID = "GoPro:" + GoProCameraInstance.getStatus('status', '30')
 
-    try:
+            print('%s: Connected' % (GoProID))
 
-        GoProCameraInstance = GoProCamera.GoPro()
+            GoProDateTime = TimeSunkDateTime(GoProCameraInstance)
+            GoProSettings = TimeSunkSettings(GoProCameraInstance, settings)
+            GoProStatus = TimeSunkStatus(GoProCameraInstance)
 
-        GoProWifiSSID = "GoPro:" + GoProCameraInstance.getStatus('status', '30')
+            datetime_before = GoProDateTime.get()
 
-        GoProDateTime = TimeSunkDateTime(GoProCameraInstance)
-        GoProSettings = TimeSunkSettings(GoProCameraInstance, settings)
-        GoProStatus = TimeSunkStatus(GoProCameraInstance)
+            print('%s: Time: %s ' % (GoProID, datetime_before))
 
-        timecode = GoProDateTime.timecode(50)
+            # Setting time four times to ensure time is up to date
+            GoProDateTime.set()
+            GoProDateTime.set()
+            GoProDateTime.set()
+            GoProDateTime.set()
 
-        datetime_before = GoProDateTime.get()
+            print('%s: Time synced' % (GoProID))
 
-        print('%s: Time: %s ' % (GoProWifiSSID, datetime_before))
+            datetime_after = GoProDateTime.get()
 
-        GoProDateTime.set()
-        GoProDateTime.set()
-        GoProDateTime.set()
-        GoProDateTime.set()
+            print('%s: Time: %s ' % (GoProID, datetime_after))
 
-        print('%s: Time synced' % (GoProWifiSSID))
+            GoProSettings.set()
 
-        datetime_after = GoProDateTime.get()
+            print('%s: Settings synced' % (GoProID))
 
-        print('%s: Time: %s ' % (GoProWifiSSID, datetime_after))
+            print('%s: Updated.' % (GoProID))
 
-        GoProSettings.set()
-
-        print('%s: Settings synced' % (GoProWifiSSID))
-
-        print('%s: Updated.' % (GoProWifiSSID))
-
-    except Exception as e:
-       print("%s: Couldn't connect to Camera" % (GoProCameraWifi[0]))
+        except Exception as e:
+           print("%s: Couldn't sync/send settings" % (GoProID))
 
 # Setting null instance to do Timecode
 GoProDateTime = TimeSunkDateTime({})
